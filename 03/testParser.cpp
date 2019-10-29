@@ -3,7 +3,7 @@
 
 std::vector<std::string> testS;
 long testN;
-int index;
+int indexS;
 
 void StartParsing(){
     std::cout << "Test Parser Starts\n\n";
@@ -11,11 +11,11 @@ void StartParsing(){
 void FinishParsing(){
     std::cout << "\nTest Parser Finished\n";
 }
-void StringParsed(std::string& s){
-    assert(s == testS[index++]);
+void StringParsed(const std::string& s){
+    assert(s == testS[indexS++]);
     std::cout << "Correct string parsed: " << s << std::endl;
 }
-void EmptyStringParsed(std::string& s){
+void EmptyStringParsed(const std::string& s){
     std::cout << "Wrong string parsed: " << s << std::endl;
     assert(true);
 }
@@ -35,15 +35,15 @@ void testString(){
     testS.push_back("d");
     testS.push_back("12e2e32");
     testN = 12;
-    index = 0;
+    indexS = 0;
 
-    Parser p(str, StartParsing, FinishParsing, StringParsed, NumberParsed);
+    Parser p(str, StringParsed, NumberParsed, StartParsing, FinishParsing);
 }
 void testEmpty(){
     std::string str1 = "  \n \t \t\t \n\n   ";
     std::string str2 = "";
-    Parser p1(str1, StartParsing, FinishParsing, EmptyStringParsed, NoNumberParsed);
-    Parser p2(str2, StartParsing, FinishParsing, EmptyStringParsed, NoNumberParsed);
+    Parser p1(str1, EmptyStringParsed, NoNumberParsed);
+    Parser p2(str2, EmptyStringParsed, NoNumberParsed);
 }
 int main(){
 

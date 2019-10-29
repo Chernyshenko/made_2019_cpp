@@ -22,14 +22,14 @@ void StartParsing(){
 void FinishParsing(){
     std::cout << "Parsing Finished\n";
 }
-void StringParsed(std::string& s){
+void StringParsed(const std::string& s){
     std::cout << "string " << s << " parsed\n";
 }
 void NumberParsed(long long n){
     std::cout << "number " << n << " parsed\n";
 }
 int main(){
-    std::string str = " asd d 12 12e2e32 \t  \n";
-    Parser p(str, StartParsing, FinishParsing, StringParsed, NumberParsed);
+    std::string str = " asd d 12 12e2e32 \t  a. ";
+    Parser p(str,  StringParsed, NumberParsed, nullptr, FinishParsing);
     return 0;
 }

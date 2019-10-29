@@ -7,10 +7,10 @@ class Parser
 private:
     using Started = void (*)();
     using Finished = void (*)();
-    using StringParsed = void (*)(std::string& token);
+    using StringParsed = void (*)(const std::string& token);
     using NumberParsed = void (*)(long long token);
 public:
-    Parser(const std::string& str, Started callbackStarted, Finished callbackFinished,
-            StringParsed callbackStringParsed, NumberParsed callbackNumberParsed);
+    Parser(const std::string& str, StringParsed callbackStringParsed, NumberParsed callbackNumberParsed,
+    	Started callbackStarted = nullptr, Finished callbackFinished = nullptr);
     ~Parser(){}
 };
