@@ -11,19 +11,7 @@ int main(){
     int n = 150;
     int maxSize = 1000;
     LinearAllocator la(maxSize);
-
-    for(int i = 0; i < 15; i++){
-        char* A = la.alloc(n);
-        if (!A) printf("Cannot allocate memory for A\n");
-        else printf("Allocated %d memory\n", n);
-    }
-    la.reset();
-    for(int i = 0; i < 15; i++){
-        char* A = la.alloc(n);
-        if (!A) printf("Cannot allocate memory for A\n");
-        else printf("Allocated %d memory\n", n);
-    }
-    
-    
+    la.alloc(n);
+    printf("Exit\n");
     return 0;
 }
