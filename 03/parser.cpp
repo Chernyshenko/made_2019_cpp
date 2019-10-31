@@ -24,9 +24,9 @@ Parser::Parser(const std::string& str, StringParsed callbackStringParsed, Number
 
         if (CheckNumber(s)){
             long long num = stoll(s);
-            callbackNumberParsed(num);
+            if (callbackNumberParsed) callbackNumberParsed(num);
         } 
-        else {
+        else if (callbackStringParsed){
             callbackStringParsed(s);
         } 
 
