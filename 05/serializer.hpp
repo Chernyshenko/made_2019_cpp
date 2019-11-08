@@ -37,7 +37,7 @@ private:
         return Error::NoError;
     }
     template <class T>
-    Error process(T& val){
+    Error process(T&& val){
         out_ << val << Separator;
         return Error::NoError;
     }
@@ -88,10 +88,8 @@ private:
         return Error::NoError;
     }
     template <class T> //int
-    Error deprocess(T& value){
-        T num;
-        in_ >> num;
-        value = num;
+    Error deprocess(T&& value){
+        in_ >> value;
         return Error::NoError;
     }
     template <class T, class... Args>
