@@ -23,7 +23,7 @@ public:
     }
 
     template <class... ArgsT>
-    Error operator()(ArgsT... args)
+    Error operator()(ArgsT&... args)
     {
         return process(args...);
     }
@@ -44,7 +44,7 @@ private:
     template <class T, class... Args>
     Error process(T&& val, Args&&... args)
     {
-        process(val);
+        process(std::forward<T>(val));
         process(std::forward<Args>(args)...);
         return Error::NoError;
     }
@@ -95,7 +95,7 @@ private:
     template <class T, class... Args>
     Error deprocess(T&& val, Args&&... args)
     {
-        deprocess(val);
+        deprocess(std::forward<T>(val));
         deprocess(std::forward<Args>(args)...);
         return Error::NoError;
     }
