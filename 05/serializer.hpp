@@ -23,15 +23,15 @@ public:
     }
 
     template <class... ArgsT>
-    Error operator()(ArgsT&... args)
+    Error operator()(ArgsT&&... args)
     {
-        return process(args...);
+        return process(std::forward<ArgsT>(args)...);
     }
     
 private:
     std::ostream& out_;
 
-    Error process(bool& val){
+    Error process(bool val){
         if (val) out_ << "true" << Separator;
         else out_ << "false" << Separator;
         return Error::NoError;
@@ -66,9 +66,9 @@ public:
     }
 
     template <class... ArgsT>
-    Error operator()(ArgsT&... args)
+    Error operator()(ArgsT&&... args)
     {
-        return deprocess(args...);
+        return deprocess(std::forward<ArgsT>(args)...);
     }
     
 private:
