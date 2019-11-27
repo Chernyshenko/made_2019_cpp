@@ -21,29 +21,6 @@ bool IsNum(char c){
     if (n >= 0 && n <= 9) return true;
     return false;
 }
-string format_argv(string&& s, std::vector<string>& argv){
-       
-    stringstream res;
-    stringstream stream;
-    stream << s;
-    const char left = '{', right = '}';
-    char c;
-    int argc = argv.size();
-    for (auto i = 0; i < s.size(); i++){
-        if (s[i] == left){
-            i++;
-            int j = 0;
-            while(IsNum(s[i+j])) j++;
-            int argi = IntFromChar((char*)(&s[i]), j);
-            if (argi < 0 || argi >= argc) throw std::runtime_error("Cannot read arg index");
-            res << argv[argi];
-            i += j;
-            if (s[i] != right) throw std::runtime_error("Not }");
-        }
-        else if (s[i] == right) throw std::runtime_error("Symbol } is out of context");
-        else res << s[i];
-    }
-    return res.str();
-}
+
 
 

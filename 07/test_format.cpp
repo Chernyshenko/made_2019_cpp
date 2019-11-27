@@ -44,8 +44,17 @@ void test_throw_runtime_error_wrong_arg(){
     catch(const std::runtime_error& error){
         std::string s = error.what();
         assert (s == "Cannot read arg index" );
+        cout << "test_throw_runtime_error_wrong_arg OK\n"; 
+        return;
     }
-    cout << "test_throw_runtime_error_wrong_arg OK\n"; 
+    assert(false);
+}
+
+void test_lvalue(){
+    std::string s = "{1}+{1} = {0}";
+    auto text = format(std::move(s), 2, "one");
+    assert(text == "one+one = 2"); 
+    cout << "test_lvalue OK\n"; 
 }
 int main(int argc, char const *argv[])
 {
@@ -55,6 +64,7 @@ int main(int argc, char const *argv[])
         test_throw_runtime_error1();
         test_throw_runtime_error2();
         test_throw_runtime_error_wrong_arg();
+        test_lvalue();
     }
     catch(const std::runtime_error& error){
         cout << "Catched runtime_error: " << error.what() << endl; 
