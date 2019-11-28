@@ -5,7 +5,8 @@
 #include <iostream>
 #include <stdexcept>
 #include <cstdlib>
-int IntFromChar(char* c, int n);
+
+int IntFromChar(const char* c, int n);
 bool IsNum(char c);
 template <class String = std::string>
 std::string format_argv(String&& s, std::vector<std::string>& argv){
@@ -21,7 +22,7 @@ std::string format_argv(String&& s, std::vector<std::string>& argv){
             i++;
             int j = 0;
             while(IsNum(s[i+j])) j++;
-            int argi = IntFromChar((char*)(&s[i]), j);
+            int argi = IntFromChar(s.c_str() + i, j);
             if (argi < 0 || argi >= argc) throw std::runtime_error("Cannot read arg index");
             res << argv[argi];
             i += j;
