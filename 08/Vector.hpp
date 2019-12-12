@@ -11,12 +11,11 @@ public:
 
 template <class T>
 class Iterator
-    : public std::iterator<std::forward_iterator_tag, T>
+    : public std::iterator<std::bidirectional_iterator_tag, T>
 {
     T* ptr_;
 public:
     using reference = T&;
-
     explicit Iterator(T* ptr)
         : ptr_(ptr)
     {
@@ -50,7 +49,7 @@ public:
     }
 };
 
-template <class T, class Alloc = Allocator<T>>
+template <class T, class Alloc = Allocator<T> >
 class Vector
 {
 public:
@@ -106,13 +105,9 @@ private:
 template <class T, class Alloc>
 void Vector<T, Alloc>:: reallocate(size_type newsize){
     T* mem = alloc_.allocate(newsize);
-    if (mem){
-        memmove(mem, data, size_ * sizeof(T));
-        data = mem;
-    }
-    else{
-        throw std::bad_alloc();
-    }
+    std::copy(data, data + size_, mem);
+    delete[] data;
+    data = mem;
 }
 template <class T, class Alloc>
 Vector<T, Alloc>::Vector() : capacity_(4), size_(0){ 
@@ -127,8 +122,7 @@ Vector<T, Alloc>::Vector(size_type count) : capacity_(count), size_(count) {
 template <class T, class Alloc>
 Vector<T, Alloc>::Vector(size_type count, const value_type& defaultValue) : capacity_(count), size_(count){
     data = alloc_.allocate(capacity_);
-    for(size_type i = 0; i < size_; i++)
-        data[i] = defaultValue;
+    std::fill(data, data + size_, defaultValue );
 }
 template <class T, class Alloc>
 Vector<T, Alloc>::~Vector(){
@@ -205,5 +199,7 @@ bool Vector<T, Alloc>::empty() const noexcept {
 }
 template <class T, class Alloc>
 void Vector<T, Alloc>::clear() noexcept {
+    for(size_type i = 0; i < size_; i++)
+        data[i].~T();
     size_ = 0;
 }
