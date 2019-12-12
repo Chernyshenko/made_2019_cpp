@@ -9,7 +9,7 @@
 int IntFromChar(const char* c, int n);
 bool IsNum(char c);
 
-std::string format_argv(const std::string&& s, std::vector<std::string>& argv);
+std::string format_argv(const std::string& s, std::vector<std::string>& argv);
 template <class T>
 void make_arg_string(std::vector<std::string>& argv, T&& val){
     std::stringstream stream;
