@@ -11,7 +11,7 @@ public:
 
 template <class T>
 class Iterator
-    : public std::iterator<std::bidirectional_iterator_tag, T>
+    : public std::iterator<std::random_access_iterator_tag, T>
 {
     T* ptr_;
 public:
@@ -105,9 +105,10 @@ private:
 template <class T, class Alloc>
 void Vector<T, Alloc>:: reallocate(size_type newsize){
     T* mem = alloc_.allocate(newsize);
-    std::copy(data, data + size_, mem);
-    delete[] data;
+    std::move(data, data + size_, mem);
+    alloc_.deallocate(data, capacity_);
     data = mem;
+    mem = nullptr;
 }
 template <class T, class Alloc>
 Vector<T, Alloc>::Vector() : capacity_(4), size_(0){ 
@@ -126,6 +127,7 @@ Vector<T, Alloc>::Vector(size_type count, const value_type& defaultValue) : capa
 }
 template <class T, class Alloc>
 Vector<T, Alloc>::~Vector(){
+    clear();
     alloc_.deallocate(data, capacity_);
 }
 
@@ -146,7 +148,7 @@ void Vector<T, Alloc>::resize(size_type newsize){
             reallocate(capacity_);
         }
         for(size_type i = size_; i < newsize; i++){
-            data[i] = T();
+            alloc_.construct(data + i, T());
         }   
         size_ = newsize; 
     }
@@ -163,7 +165,7 @@ void Vector<T, Alloc>::resize(size_type newsize, const_reference defaultValue){
             reallocate(capacity_);
         }
         for(size_type i = size_; i < newsize; i++){
-            data[i] = defaultValue;
+            alloc_.construct(data + i, defaultValue);
         }
         size_ = newsize;     
     }    
@@ -171,20 +173,20 @@ void Vector<T, Alloc>::resize(size_type newsize, const_reference defaultValue){
 }
 template <class T, class Alloc>
 void Vector<T, Alloc>::push_back(value_type&& value){
-    if (capacity_ < size_ + 1) {
+    if (capacity_ == size_) {
         capacity_ *= 2;
         reallocate(capacity_);
     }
-    data[size_] = value;
+    alloc_.construct(data + size_, value);
     size_++;   
 }
 template <class T, class Alloc>
 void Vector<T, Alloc>::push_back(const value_type& value){
-    if (capacity_ < size_ + 1) {
+    if (capacity_ == size_ ) {
         capacity_ *= 2;
         reallocate(capacity_);
     }
-    data[size_] = value;
+    alloc_.construct(data + size_, value);
     size_++;   
 }
 
@@ -200,6 +202,6 @@ bool Vector<T, Alloc>::empty() const noexcept {
 template <class T, class Alloc>
 void Vector<T, Alloc>::clear() noexcept {
     for(size_type i = 0; i < size_; i++)
-        data[i].~T();
+         alloc_.destroy(data + i);
     size_ = 0;
 }
