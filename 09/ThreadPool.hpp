@@ -1,3 +1,4 @@
+#pragma once
 #include <thread>
 #include <future>
 #include <vector>
@@ -6,6 +7,7 @@
 #include <condition_variable>
 #include <functional>
 #include <memory>
+#include <atomic>
 
 class ThreadPool
 {
@@ -15,7 +17,7 @@ private:
     std::mutex func_mutex;
     std::condition_variable newFunc;
     std::queue<Task> tasks;
-    bool stop_pool;
+    std::atomic<bool> stop_pool;
 public:
     explicit ThreadPool(size_t poolSize);
     ~ThreadPool();
@@ -23,45 +25,6 @@ public:
     template <class Func, class... Args>
     auto exec(Func func, Args... args) -> std::future<decltype(func(args...))>;
 };
-
-ThreadPool::ThreadPool(size_t poolSize) : stop_pool(false){
-
-    for(size_t i = 0; i < poolSize; i++){
-        pool.emplace_back([this](){
-            while(true)
-            {
-                Task task;
-                {
-                    std::unique_lock<std::mutex> lock(func_mutex);
-                    newFunc.wait(lock, 
-                        [this]()
-                        { 
-                            return !tasks.empty() || stop_pool;
-                        });
-
-                    if (tasks.empty() || stop_pool)
-                        return;
-
-                    task = tasks.front();
-                    tasks.pop();
-                }
-                task();
-            }
-        });
-    }
-}
-ThreadPool::~ThreadPool()
-{
-    {
-        std::unique_lock<std::mutex> lock(func_mutex);
-        stop_pool = true;
-    }
-    newFunc.notify_all();
-    for (auto& t : pool)
-    {
-        t.join();
-    }
-}
 
 template <class Func, class... Args>
 auto ThreadPool::exec(Func func, Args... args) -> std::future<decltype(func(args...))>{
