@@ -232,7 +232,7 @@ void Vector<T, Alloc>::push_back(value_type&& value){
         capacity_ *= 2;
         reallocate(capacity_);
     }
-    alloc_.construct(data + size_, value);
+    alloc_.construct(data + size_, std::move(value));
     size_++;   
 }
 template <class T, class Alloc>

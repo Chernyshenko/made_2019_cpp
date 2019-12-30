@@ -23,7 +23,7 @@ bool IsNum(char c){
     return false;
 }
 
-std::string format_argv(const std::string&& s, std::vector<std::string>& argv){
+std::string format_argv(const std::string& s, std::vector<std::string>& argv){
        
     std::stringstream res;
     std::stringstream stream;
