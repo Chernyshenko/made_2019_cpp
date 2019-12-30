@@ -1,7 +1,9 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <array>
 #include <stdexcept>
+#include <string.h>
 
 class Expression {
 public:
@@ -22,9 +24,20 @@ public:
 
 class CalcParser {
 public:
-	CalcParser(const char* cur_) : cur(cur_) {}
+	CalcParser(const char* cur_) {
+		size_t n = strlen(cur_); 
+		copy_full = new char[n];
+		strcpy(copy_full, cur_);
+		cur = copy_full;
+	}
+	~CalcParser(){
+		if (copy_full) delete[] copy_full;
+		cur = nullptr;
+		copy_full = nullptr;
+	}
 	Expression Parse(int pr);
 private:
+	char* copy_full;
 	const char* cur;
 
 	std::string ParseElement();
@@ -32,8 +45,6 @@ private:
 	int Priority(const std::string& operation);
 	bool IsNum(char c);
 	int IntFromChar(const char c){ return c - '0';}
-	int IntFromChar(const char* c, int n);
-
 };
 
 class Calculator{
@@ -50,15 +61,6 @@ bool CalcParser::IsNum(char c){
     if (n >= 0 && n <= 9) return true;
     return false;
 }
-int CalcParser::IntFromChar(const char* c, int n){
-    int res = 0;
-    int d = 1;
-    for(int i = n - 1; i >= 0; i--){
-        res += d * IntFromChar(c[i]);
-        d *= 10;
-    }
-    return res;
-}
 std::string CalcParser::ParseElement() {
 	const char space = ' ';
 	while ( *cur == space) cur++;
@@ -73,11 +75,11 @@ std::string CalcParser::ParseElement() {
     	return snum.str();
     }
 
-	std::vector<std::string> operations = {"+", "-", "*", "/"};
+	std::array<char, 4> operations = {'+', '-', '*', '/'};
 	for (auto& op : operations) {
-		if ( (*cur) == op[0]) {
+		if ( (*cur) == op) {
 			cur++;
-			return op;
+			return std::string(1,op);
 		}
 	}
 	return "";
@@ -140,8 +142,11 @@ int Calculator::Calc(int& err){
 	try{
 		res = Calc(p.Parse(), err);
 	}
-	catch(...){
-		err = -1;
-	};
+	catch (std::exception& e)
+  	{
+    	std::cout << e.what() << '\n';
+    	err = -1;
+  	}
+
 	return res;
 }
