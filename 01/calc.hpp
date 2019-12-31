@@ -63,8 +63,8 @@ std::string CalcParser::ParseElement() {
 	int j = 0;
 	std::ostringstream snum;
 	while(IsNum(*(cur))) {
-    	snum << *(cur);
-    	cur++;
+		snum << *(cur);
+		cur++;
 	}
 	if (!snum.str().empty()){
 		return snum.str();
