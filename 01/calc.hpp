@@ -24,20 +24,15 @@ public:
 
 class CalcParser {
 public:
-	CalcParser(const char* cur_) {
-		size_t n = strlen(cur_); 
-		copy_full = new char[n];
-		strcpy(copy_full, cur_);
-		cur = copy_full;
+	CalcParser(const char* cur_) : copy_full(cur_){
+		cur = copy_full.c_str();
 	}
 	~CalcParser(){
-		if (copy_full) delete[] copy_full;
 		cur = nullptr;
-		copy_full = nullptr;
 	}
 	Expression Parse(int pr);
 private:
-	char* copy_full;
+	const std::string copy_full;
 	const char* cur;
 
 	std::string ParseElement();
@@ -67,13 +62,13 @@ std::string CalcParser::ParseElement() {
 
 	int j = 0;
 	std::ostringstream snum;
-    while(IsNum(*(cur))) {
+	while(IsNum(*(cur))) {
     	snum << *(cur);
     	cur++;
-    }
-    if (!snum.str().empty()){
-    	return snum.str();
-    }
+	}
+	if (!snum.str().empty()){
+		return snum.str();
+	}
 
 	std::array<char, 4> operations = {'+', '-', '*', '/'};
 	for (auto& op : operations) {
@@ -143,10 +138,10 @@ int Calculator::Calc(int& err){
 		res = Calc(p.Parse(), err);
 	}
 	catch (std::exception& e)
-  	{
-    	std::cout << e.what() << '\n';
-    	err = -1;
-  	}
+	{
+		std::cout << e.what() << '\n';
+		err = -1;
+	}
 
 	return res;
 }
