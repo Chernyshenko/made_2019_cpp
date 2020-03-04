@@ -1,3 +1,6 @@
+
+#pragma once
+
 #include <thread>
 #include <future>
 #include <vector>
@@ -6,6 +9,8 @@
 #include <condition_variable>
 #include <functional>
 #include <memory>
+#include <atomic>
+
 
 class ThreadPool
 {
@@ -15,6 +20,7 @@ private:
     std::mutex func_mutex;
     std::condition_variable newFunc;
     std::queue<Task> tasks;
+
     bool stop_pool;
 public:
     explicit ThreadPool(size_t poolSize);
@@ -23,6 +29,7 @@ public:
     template <class Func, class... Args>
     auto exec(Func func, Args... args) -> std::future<decltype(func(args...))>;
 };
+
 
 ThreadPool::ThreadPool(size_t poolSize) : stop_pool(false){
 
@@ -80,3 +87,4 @@ auto ThreadPool::exec(Func func, Args... args) -> std::future<decltype(func(args
 
     return future_res;
 }
+
